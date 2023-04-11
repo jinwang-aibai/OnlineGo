@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.FriendMapper">
+
+    <resultMap type="Friend" id="FriendResult">
+        <result property="id"    column="id"    />
+        <result property="adduserId"    column="adduser_id"    />
+        <result property="frienduserId"    column="frienduser_id"    />
+        <result property="status"    column="status"    />
+        <result property="addName"    column="add_name"    />
+        <result property="friendName"    column="friend_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="creatorId"    column="creator_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updatorId"    column="updator_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectFriendVo">
+        select id, adduser_id, frienduser_id, status, add_name, friend_name, del_flag, create_by, creator_id, create_time, update_by, updator_id, update_time, remark from friend
+    </sql>
+
+    <select id="selectFriendList" parameterType="Friend" resultMap="FriendResult">
+        <include refid="selectFriendVo"/>
+        <where>
+            <if test="adduserId != null "> and adduser_id = #{adduserId}</if>
+            <if test="frienduserId != null "> and frienduser_id = #{frienduserId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="addName != null  and addName != ''"> and add_name like concat('%', #{addName}, '%')</if>
+            <if test="friendName != null  and friendName != ''"> and friend_name like concat('%', #{friendName}, '%')</if>
+            <if test="creatorId != null "> and creator_id = #{creatorId}</if>
+            <if test="updatorId != null "> and updator_id = #{updatorId}</if>
+        </where>
+    </select>
+
+    <select id="selectFriendById" parameterType="Long" resultMap="FriendResult">
+        <include refid="selectFriendVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFriend" parameterType="Friend" useGeneratedKeys="true" keyProperty="id">
+        insert into friend
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adduserId != null">adduser_id,</if>
+            <if test="frienduserId != null">frienduser_id,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="addName != null">add_name,</if>
+            <if test="friendName != null">friend_name,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="creatorId != null">creator_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updatorId != null">updator_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adduserId != null">#{adduserId},</if>
+            <if test="frienduserId != null">#{frienduserId},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="addName != null">#{addName},</if>
+            <if test="friendName != null">#{friendName},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updatorId != null">#{updatorId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFriend" parameterType="Friend">
+        update friend
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="adduserId != null">adduser_id = #{adduserId},</if>
+            <if test="frienduserId != null">frienduser_id = #{frienduserId},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="addName != null">add_name = #{addName},</if>
+            <if test="friendName != null">friend_name = #{friendName},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updatorId != null">updator_id = #{updatorId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFriendById" parameterType="Long">
+        delete from friend where id = #{id}
+    </delete>
+
+    <delete id="deleteFriendByIds" parameterType="String">
+        delete from friend where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

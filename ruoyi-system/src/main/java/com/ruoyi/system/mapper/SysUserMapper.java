@@ -121,4 +121,6 @@ public interface SysUserMapper
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    SysUser selectUserByUserName(String userName);
 }
