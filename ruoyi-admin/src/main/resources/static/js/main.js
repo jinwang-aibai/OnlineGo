@@ -186,24 +186,6 @@ var sgUpdateAllQi = function () {
 }
 var makeMove = function (cursorPos, turn) {
     // 落子
-    var socket = new WebSocket("ws://localhost:8085/myWebSocketHandler");
-    socket.onopen = function(event) {
-        console.log("1")
-        console.log(event)
-
-        // 连接建立后处理逻辑
-    };
-    socket.onmessage = function(event) {
-        console.log("2")
-        console.log(event)
-
-        // 处理收到的消息
-    };
-    socket.onclose = function(event) {
-        console.log("3")
-        console.log(event)
-        // 连接关闭后处理逻辑
-    };
     sset(cursorPos.x, cursorPos.y, turn)
 
     // 加入到已有棋块

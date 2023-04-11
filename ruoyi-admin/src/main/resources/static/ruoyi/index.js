@@ -50,6 +50,15 @@ $(function() {
         $('#content-main').css('overflow-y', 'auto');
     }
 
+
+    // 进入页面创建websock
+    var socket = new WebSocket("ws://localhost:8085/myWebSocketHandler?userId=" + userId);
+    socket.onopen = function(event) {};
+    socket.onmessage = function(event) {};
+    // 关闭连接
+    socket.onclose = function(event) {};
+    // 断开重连
+    socket.onerror = function (evt) {}
 });
 
 $(window).bind("load resize", function() {
@@ -83,7 +92,7 @@ function syncMenuTab(dataId) {
             $(".nav ul li, .nav li").removeClass("selected");
             $dataObj.parent("li").addClass("selected");
             setIframeUrl(dataId);
-            
+
             // 顶部菜单同步处理
             var tabStr = $dataObj.parents(".tab-pane").attr("id");
             if ($.common.isNotEmpty(tabStr)) {
@@ -503,7 +512,7 @@ $(function() {
     $('#fullScreen').on('click', function () {
     	$(document).toggleFullScreen();
     });
-    
+
     // 锁定屏幕
     $('#lockScreen').on('click', function () {
     	storage.set('lockPath', $('.page-tabs-content').find('.active').attr('data-id'));

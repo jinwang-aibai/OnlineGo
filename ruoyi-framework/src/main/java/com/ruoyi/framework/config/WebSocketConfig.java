@@ -1,6 +1,6 @@
 package com.ruoyi.framework.config;
 
-import com.ruoyi.common.config.MyWebSocketHandler;
+import com.ruoyi.system.MyWebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
