@@ -50,21 +50,15 @@ $(function() {
         $('#content-main').css('overflow-y', 'auto');
     }
 
+
     // 进入页面创建websock
-    var socket = new WebSocket("ws://localhost:8085/myWebSocketHandler");
-    socket.onopen = function(event) {
-        console.log("1")
-        console.log(event)
-        // 连接建立后处理逻辑
-    };
-    socket.onmessage = function(event) {
-        console.log("2")
-        console.log(event)
-
-        // 处理收到的消息
-    };
+    var socket = new WebSocket("ws://localhost:8085/myWebSocketHandler?userId=" + userId);
+    socket.onopen = function(event) {};
+    socket.onmessage = function(event) {};
+    // 关闭连接
     socket.onclose = function(event) {};
-
+    // 断开重连
+    socket.onerror = function (evt) {}
 });
 
 $(window).bind("load resize", function() {
