@@ -34,7 +34,7 @@
   socket.onopen = function(event) {
     console.log("1")
     console.log(event)
-
+    socket.send(undefined);
   // 连接建立后处理逻辑
   };
   socket.onmessage = function(event) {
