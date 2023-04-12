@@ -1,4 +1,4 @@
-package com.ruoyi.system;
+package com.ruoyi.webSocket;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.service.ISysUserService;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class MyWebSocketHandler implements WebSocketHandler {
+public class WebSocketEndpoint implements WebSocketHandler {
 
     @Autowired
     private ISysUserService userService;
@@ -35,7 +35,6 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        System.out.println("*************2");
         // 处理收到的消息
     }
 

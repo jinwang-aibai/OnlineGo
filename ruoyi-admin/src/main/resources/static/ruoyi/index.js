@@ -52,7 +52,7 @@ $(function() {
 
 
     // 进入页面创建websock
-    var socket = new WebSocket("ws://localhost:8085/myWebSocketHandler?userId=" + userId);
+    var socket = new WebSocket("ws://localhost:8085/webSocketEndpoint?userId=" + userId);
     socket.onopen = function(event) {};
     socket.onmessage = function(event) {};
     // 关闭连接
