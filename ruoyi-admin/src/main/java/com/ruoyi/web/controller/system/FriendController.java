@@ -1,31 +1,26 @@
 package com.ruoyi.web.controller.system;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.system.domain.Friend;
+import com.ruoyi.system.service.IFriendService;
 import com.ruoyi.system.service.ISysUserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.system.domain.Friend;
-import com.ruoyi.system.service.IFriendService;
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 好友信息Controller
- * 
+ *
  * @author jp
  * @date 2023-04-11
  */
@@ -59,21 +54,21 @@ public class FriendController extends BaseController
     {
         startPage();
         friend.setFrienduserId(super.getUserId());
-        List<Friend> list = friendService.selectFriendList(friend);
-        friend.setFrienduserId(null);
         friend.setAdduserId(super.getUserId());
-        List<Friend> list2 = friendService.selectFriendList(friend);
-        List<Friend> list3 =new ArrayList<>();
-        for (Friend friendList:
-             list) {
-            list3.add(friendList);
-        }
-        for (Friend friendList:
-                list2) {
-            list3.add(friendList);
-        }
+        List<Friend> list = friendService.selectFriendList(friend);
+//        friend.setFrienduserId(null);
+//        List<Friend> list2 = friendService.selectFriendList(friend);
+//        List<Friend> list3 =new ArrayList<>();
+//        for (Friend friendList:
+//             list) {
+//            list3.add(friendList);
+//        }
+//        for (Friend friendList:
+//                list2) {
+//            list3.add(friendList);
+//        }
 
-        return getDataTable(list3);
+        return getDataTable(list);
     }
 
     /**

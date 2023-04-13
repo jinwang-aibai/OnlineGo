@@ -52,9 +52,12 @@ $(function() {
 
 
     // 进入页面创建websock
-    var socket = new WebSocket("ws://localhost:8085/webSocketEndpoint?userId=" + userId);
-    socket.onopen = function(event) {};
-    socket.onmessage = function(event) {};
+    var socket = new WebSocket("ws://localhost:8085/webSocketEndpoint");
+    socket.onopen = function(event) {
+        socket.send(JSON.stringify({"userId": userId, "type": 0}))
+    };
+    socket.onmessage = function(event) {
+    };
     // 关闭连接
     socket.onclose = function(event) {};
     // 断开重连
