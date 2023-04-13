@@ -25,16 +25,69 @@
   <canvas id="C" width="800" height="600"></canvas>
   <textarea id="T" rows="20"></textarea>
   <button id="RePlay">复现棋谱</button>
-  <button id="palyGame" onclick="palyGame()">开始游戏</button>
+  <button id="palyGame" onclick="goGame()">开始游戏</button>
   <script th:src="@{/js/jquery.min.js?v=3.6.3}"></script>
   <script th:inline="javascript">
     var id = [[${id}]]
+    var userId = [[${userId}]]
+    var flag = false;
+    var openGameFlag = false;
+    var userId2;
+    var gameId;
+    var lockFlag = false;
   </script>
     <script src="/js/main.js"></script>
+  <script>
+    // 进入页面创建websock
+    var socket = new WebSocket("ws://192.168.0.126:8085/webSocketGo");
+    socket.onopen = function(event) {
+      socket.send(JSON.stringify({"userId": userId, "roomId": id, "type": 0}))
+      setInterval(watchStatus, 1 * 1000);
+    };
+    socket.onmessage = function(event) {
+      var jsonObject = JSON.parse(event.data);
+      if (jsonObject['type'] == 1) {
+        flag = jsonObject['flag'];
+        cursorPos.x = jsonObject['hang'];
+        cursorPos.y = jsonObject['lie'];
+        dianji();
+        return;
+      }
+      if (jsonObject['type'] == 2) {
+        var list = JSON.parse(jsonObject['list'])[id];
+        flag = jsonObject['flag'];
+        if (list.length == 2) {
+          openGameFlag = true
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].userId != userId) {
+              userId2 = list[i].userId;
+            }
+          }
+        }
+        return;
+      }
 
+      var list = jsonObject[id];
+      console.log(list)
+      if (list.length == 2) {
+        openGameFlag = true
+       for (var i = 0; i < list.length; i++) {
+         if (list[i].userId != userId) {
+           userId2 = list[i].userId;
+         }
+       }
+      }
+
+    };
+    // 关闭连接
+    socket.onclose = function(event) {};
+    // 断开重连
+    socket.onerror = function (evt) {}
+
+    function watchStatus() {
+      socket.send(JSON.stringify({"type": 2, "roomId": id, "openGameFlag": flag}))
+    }
+  </script>
 </body>
 
-<script>
-
-</script>
 </html>

@@ -185,9 +185,15 @@ var sgUpdateAllQi = function () {
     }
 }
 var makeMove = function (cursorPos, turn) {
+    if (!flag) {
+        alert("请点击开始游戏")
+        return;
+    }
+    socket.send(JSON.stringify({"x": cursorPos.x, "y": cursorPos.y, "type": 1, "roomId": id}))
+
     // 落子
     sset(cursorPos.x, cursorPos.y, turn)
-
+    lockFlag = false;
     addStep(cursorPos.x, cursorPos.y, turn, 101);
 
     // 加入到已有棋块
@@ -205,28 +211,36 @@ function addStep(x, y, turn, userId) {
             "lie": y,
             "type": turn,
             "playerId": userId,
+            "gameId": gameId
         },
         url: "/system/step/add",
         success: function (){
-            alert(1)
         }
     })
 
 }
+function goGame(){
+    if (!openGameFlag) {
+        alert('游戏不足两人，无法开始游戏')
+        return;
+    }
+    lockFlag = true;
+    flag = true;
+    socket.send(JSON.stringify({"roomId": id, "type": 3}))
+    playGame(userId, userId2, id);
+}
 
-function palyGame(myselfId,myselfName,enemyId,enemyName,roomId){
+var playGame = function (myselfId,enemyId,roomId){
     $.ajax({
         type: "post",
         data: {
             "myselfId":myselfId ,
-            "myselfName":myselfName ,
             "enemyId":enemyId ,
-            "enemyName": enemyName,
             "roomId": roomId,
         },
         url: "/system/game/add",
-        success: function (){
-            alert(1)
+        success: function (result){C
+            gameId = result.gameId
         }
     })
 }
@@ -399,7 +413,14 @@ _C.addEventListener("mousemove", function (event) {
     // console.log(findNeighbors(i,j))
 })
 var _T = document.getElementById("T")
-_C.addEventListener("click", function (event) {
+_C.addEventListener("click", dianji)
+
+function dianji() {
+    if (!flag) {
+        alert("请点击开始游戏")
+        return;
+    }
+
     // console.log("i,j", cursorPos.x, cursorPos.y)
     if (cursorPos.x < boardSize && cursorPos.y < boardSize) {
         // console.log("i,j", i, j)
@@ -433,7 +454,7 @@ _C.addEventListener("click", function (event) {
             turn = 3 - turn;
         }
     }
-})
+}
 document.getElementsByTagName("body")[0].addEventListener("keyup", function (event) {
     // console.log(event)
     if (event.target == this && event.key == 'f') {
@@ -447,9 +468,6 @@ _T.addEventListener("change", function (event) {
     }
 })
 var RePlay = document.getElementById("RePlay");
-var palyGame = document.getElementById("palyGame");
-
-
 var replay = function (pu) {
     boardClear();
     var z = pu.split(/\n|\r|\r\n/)

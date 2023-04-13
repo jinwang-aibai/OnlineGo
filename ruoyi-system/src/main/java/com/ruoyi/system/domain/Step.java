@@ -4,10 +4,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * 步骤对象 step
- * 
+ *
  * @author ruoyi
  * @date 2023-04-12
  */
@@ -53,93 +54,93 @@ public class Step extends BaseEntity
     @Excel(name = "更新人id 更新者的sys_user_id")
     private Long updatorId;
 
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setGameId(Long gameId) 
+    public void setGameId(Long gameId)
     {
         this.gameId = gameId;
     }
 
-    public Long getGameId() 
+    public Long getGameId()
     {
         return gameId;
     }
-    public void setPlayerId(Long playerId) 
+    public void setPlayerId(Long playerId)
     {
         this.playerId = playerId;
     }
 
-    public Long getPlayerId() 
+    public Long getPlayerId()
     {
         return playerId;
     }
-    public void setHang(Long hang) 
+    public void setHang(Long hang)
     {
         this.hang = hang;
     }
 
-    public Long getHang() 
+    public Long getHang()
     {
         return hang;
     }
-    public void setLie(Long lie) 
+    public void setLie(Long lie)
     {
         this.lie = lie;
     }
 
-    public Long getLie() 
+    public Long getLie()
     {
         return lie;
     }
-    public void setType(String type) 
+    public void setType(String type)
     {
         this.type = type;
     }
 
-    public String getType() 
+    public String getType()
     {
         return type;
     }
-    public void setValidFlag(Integer validFlag) 
+    public void setValidFlag(Integer validFlag)
     {
         this.validFlag = validFlag;
     }
 
-    public Integer getValidFlag() 
+    public Integer getValidFlag()
     {
         return validFlag;
     }
-    public void setDelFlag(Integer delFlag) 
+    public void setDelFlag(Integer delFlag)
     {
         this.delFlag = delFlag;
     }
 
-    public Integer getDelFlag() 
+    public Integer getDelFlag()
     {
         return delFlag;
     }
-    public void setCreatorId(Long creatorId) 
+    public void setCreatorId(Long creatorId)
     {
         this.creatorId = creatorId;
     }
 
-    public Long getCreatorId() 
+    public Long getCreatorId()
     {
         return creatorId;
     }
-    public void setUpdatorId(Long updatorId) 
+    public void setUpdatorId(Long updatorId)
     {
         this.updatorId = updatorId;
     }
 
-    public Long getUpdatorId() 
+    public Long getUpdatorId()
     {
         return updatorId;
     }
@@ -164,4 +165,13 @@ public class Step extends BaseEntity
             .append("remark", getRemark())
             .toString();
     }
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        json.put("id", getId());
+        json.put("hang", getHang());
+        json.put("lie", getLie());
+        return json;
+    }
+
 }

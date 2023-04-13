@@ -52,7 +52,7 @@ $(function() {
 
 
     // 进入页面创建websock
-    var socket = new WebSocket("ws://localhost:8085/webSocketEndpoint");
+    var socket = new WebSocket("ws://192.168.0.126:8085/webSocketEndpoint");
     socket.onopen = function(event) {
         socket.send(JSON.stringify({"userId": userId, "type": 0}))
     };
