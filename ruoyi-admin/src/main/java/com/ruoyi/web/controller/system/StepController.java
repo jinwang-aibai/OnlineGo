@@ -44,7 +44,7 @@ public class StepController extends BaseController
     /**
      * 查询步骤列表
      */
-    @RequiresPermissions("system:step:list")
+
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(Step step)
@@ -57,7 +57,7 @@ public class StepController extends BaseController
     /**
      * 导出步骤列表
      */
-    @RequiresPermissions("system:step:export")
+
     @Log(title = "步骤", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
@@ -80,7 +80,7 @@ public class StepController extends BaseController
     /**
      * 新增保存步骤
      */
-    @RequiresPermissions("system:step:add")
+
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(Step step)
@@ -91,7 +91,7 @@ public class StepController extends BaseController
     /**
      * 修改步骤
      */
-    @RequiresPermissions("system:step:edit")
+
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable("id") Long id, ModelMap mmap)
     {
@@ -103,7 +103,7 @@ public class StepController extends BaseController
     /**
      * 修改保存步骤
      */
-    @RequiresPermissions("system:step:edit")
+
     @Log(title = "步骤", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
@@ -115,7 +115,7 @@ public class StepController extends BaseController
     /**
      * 删除步骤
      */
-    @RequiresPermissions("system:step:remove")
+
     @Log(title = "步骤", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody

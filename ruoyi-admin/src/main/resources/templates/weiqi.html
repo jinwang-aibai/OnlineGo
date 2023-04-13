@@ -39,7 +39,7 @@
     <script src="/js/main.js"></script>
   <script>
     // 进入页面创建websock
-    var socket = new WebSocket("ws://192.168.0.126:8085/webSocketGo");
+    var socket = new WebSocket("ws://192.168.0.107:8085/webSocketGo");
     socket.onopen = function(event) {
       socket.send(JSON.stringify({"userId": userId, "roomId": id, "type": 0}))
       setInterval(watchStatus, 1 * 1000);
