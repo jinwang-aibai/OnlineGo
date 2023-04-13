@@ -39,7 +39,8 @@
         var removeFlag = [[${@permission.hasPermi('system:friend:remove')}]];
         var statusDatas = [[${@dict.getType('sys_add_type')}]];
         var prefix = ctx + "system/friend";
-        var userId = [[${userId}]]
+        var userId = [[${userId}]];
+
 
         $(function() {
             var options = {
@@ -50,18 +51,6 @@
                 exportUrl: prefix + "/export",
                 modalName: "好友信息",
                 columns: [
-                //     {
-                //     checkbox: true
-                // },
-                // {
-                //     field: 'id',
-                //     title: 'ID',
-                //     visible: false
-                // },
-                // {
-                //     field: 'adduserId',
-                //     title: '添加人userid'
-                // },
                     {
                         field: 'addName',
                         title: '添加人name'
@@ -70,10 +59,18 @@
                         field: 'friendName',
                         title: '好友name'
                     },
-                // {
-                //     field: 'frienduserId',
-                //     title: '好友userid'
-                // },
+                    {
+                        field: 'friendStatusName',
+                        title: '好友在线状态'
+                        ,formatter: function(value, row, index) {
+                            if(value == 1 ){
+                                return "在线";
+                            }else {
+                                return "离线";
+                            }
+                        }
+
+                    },
                 {
                     field: 'status',
                     title: '添加状态 ',
@@ -81,18 +78,6 @@
                        return $.table.selectDictLabel(statusDatas, value);
                     }
                 },
-                // {
-                //     field: 'creatorId',
-                //     title: '创建人id 创建者的sys_user_id'
-                // },
-                // {
-                //     field: 'updatorId',
-                //     title: '更新人id 更新者的sys_user_id'
-                // },
-                // {
-                //     field: 'remark',
-                //     title: '备注'
-                // },
                 {
                     title: '操作',
                     align: 'center',
@@ -102,13 +87,43 @@
 
                             actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
                         }
-                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
                         return actions.join('');
                     }
                 }]
             };
             $.table.init(options);
+
+            // 进入页面创建websock
+            var socket = new WebSocket("ws://localhost:8085/webSocketEndpoint");
+            socket.onopen = function(event) {
+                // socket.send(JSON.stringify({"type": 1}))
+                setInterval(function() {
+                    socket.send(JSON.stringify({"type": 1}));
+                }, 5 * 1000)
+            };
+            socket.onmessage = function(event) {
+                var jsonObject = JSON.parse(event.data);
+
+                var tableData = $('#bootstrap-table').bootstrapTable('getData');
+                for ( var i = 0; i < tableData.length; i++ ) {
+                    console.log(tableData[i].frienduserId);
+                    console.log(jsonObject[tableData[i].frienduserId]);
+                    if (jsonObject[tableData[i].frienduserId] != null){
+                        tableData[i].friendStatusName = 1
+                    }else {
+                        tableData[i].friendStatusName = 0
+                    }
+                }
+                console.log(tableData)
+                console.log(jsonObject)
+                $('#bootstrap-table').bootstrapTable('load', tableData);
+            };
+            // 关闭连接
+            socket.onclose = function(event) {};
+            // 断开重连
+            socket.onerror = function (evt) {};
         });
+
     </script>
 </body>
 </html>

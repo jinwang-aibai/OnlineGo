@@ -1,8 +1,6 @@
-package com.ruoyi.system;
+package com.ruoyi.webSocket;
 
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.system.service.ISysUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
@@ -13,10 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class MyWebSocketHandler implements WebSocketHandler {
+public class WebSocketGo implements WebSocketHandler {
 
-    @Autowired
-    private ISysUserService userService;
+
 
     // 在线数量
     private static Integer count = 0;
@@ -25,17 +22,10 @@ public class MyWebSocketHandler implements WebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         System.out.println("WebSocket连接成功");
-        count++;
-        String query = session.getUri().getQuery();
-        String[] params = query.split("=");
-        Long userId = Long.parseLong(params[1]);
-        map.put(userId, userService.selectUserById(userId));
-        // 连接建立后处理逻辑
     }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        System.out.println("*************2");
         // 处理收到的消息
     }
 

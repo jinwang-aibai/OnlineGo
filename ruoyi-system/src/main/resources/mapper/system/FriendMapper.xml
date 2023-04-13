@@ -29,7 +29,7 @@
         <include refid="selectFriendVo"/>
         <where>
             <if test="adduserId != null "> and adduser_id = #{adduserId}</if>
-            <if test="frienduserId != null "> and frienduser_id = #{frienduserId}</if>
+            <if test="frienduserId != null "> or frienduser_id = #{frienduserId}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="addName != null  and addName != ''"> and add_name like concat('%', #{addName}, '%')</if>
             <if test="friendName != null  and friendName != ''"> and friend_name like concat('%', #{friendName}, '%')</if>
