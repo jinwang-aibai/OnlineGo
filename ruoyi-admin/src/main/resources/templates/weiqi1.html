@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <title>围棋</title>
+  <style>
+    body{
+      /* background-color:red; */
+    }
+    canvas{
+      /* background-color:white; */
+    }
+    #Test{
+      /* display: flex;
+      flex-direction:column-reverse; */
+    }
+    #Test textarea{
+      width:20em;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="C" width="800" height="600"></canvas>
+  <textarea id="T" rows="20" hidden></textarea>
+  <button id="RePlay" hidden>复现棋谱</button>
+  <button onclick="stop()">暂停</button>
+  <button onclick="noStop()">继续</button>
+  <script th:src="@{/js/jquery.min.js?v=3.6.3}"></script>
+    <script src="/js/main1.js"></script>
+
+  <script th:inline="javascript">
+    var stepList = [[${stepList}]]
+    console.log(stepList)
+    // for (var i = 0; i < stepList.length; i++) {
+    //   var step = stepList[i];
+    //   $("#T").val($("#T").val() + '\n' + step.hang + ',' + step.lie + ' ' + step.type)
+    //   replay(_T.value)
+    // }
+    var i = 0;
+    var a = setInterval(function () {
+      var step1 = stepList[i];
+      $("#T").val($("#T").val() + '\n' + step1.hang + ',' + step1.lie + ' ' + step1.type)
+      replay(_T.value)
+      i++;
+      if (i >= stepList.length) {
+        clearInterval(a);
+      }
+    }, 1 * 1000);
+
+    function stop() {
+      clearInterval(a);
+    }
+
+    function noStop(){
+      a = setInterval(function () {
+        var step1 = stepList[i];
+        $("#T").val($("#T").val() + '\n' + step1.hang + ',' + step1.lie + ' ' + step1.type)
+        replay(_T.value)
+        i++;
+        if (i >= stepList.length) {
+          clearInterval(a);
+        }
+      }, 1 * 1000);
+    }
+  </script>
+</body>
+
+</html>
