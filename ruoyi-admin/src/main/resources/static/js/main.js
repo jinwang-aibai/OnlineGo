@@ -188,12 +188,49 @@ var makeMove = function (cursorPos, turn) {
     // 落子
     sset(cursorPos.x, cursorPos.y, turn)
 
+    addStep(cursorPos.x, cursorPos.y, turn, 101);
+
     // 加入到已有棋块
     sgadd(cursorPos.x, cursorPos.y, turn)
 
     // 重新计算所有的气
     // sgUpdateAllQi()
 }
+
+function addStep(x, y, turn, userId) {
+    $.ajax({
+        type: "post",
+        data: {
+            "hang": x,
+            "lie": y,
+            "type": turn,
+            "playerId": userId,
+        },
+        url: "/system/step/add",
+        success: function (){
+            alert(1)
+        }
+    })
+
+}
+
+function palyGame(myselfId,myselfName,enemyId,enemyName,roomId){
+    $.ajax({
+        type: "post",
+        data: {
+            "myselfId":myselfId ,
+            "myselfName":myselfName ,
+            "enemyId":enemyId ,
+            "enemyName": enemyName,
+            "roomId": roomId,
+        },
+        url: "/system/game/add",
+        success: function (){
+            alert(1)
+        }
+    })
+}
+
 var tizi = function (x, y, color) {
     // 首先检测周围的不同色棋子是否可以提
     // 如不可，则继续检测自身
@@ -410,6 +447,9 @@ _T.addEventListener("change", function (event) {
     }
 })
 var RePlay = document.getElementById("RePlay");
+var palyGame = document.getElementById("palyGame");
+
+
 var replay = function (pu) {
     boardClear();
     var z = pu.split(/\n|\r|\r\n/)

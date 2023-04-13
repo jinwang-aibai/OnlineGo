@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RoomMapper">
+
+    <resultMap type="Room" id="RoomResult">
+        <result property="id"    column="id"    />
+        <result property="roomName"    column="room_name"    />
+        <result property="creatorId"    column="creator_id"    />
+        <result property="createName"    column="create_name"    />
+        <result property="inviteId"    column="invite_id"    />
+        <result property="inviteName"    column="invite_name"    />
+        <result property="watchId"    column="watch_id"    />
+        <result property="watchName"    column="watch_name"    />
+        <result property="validFlag"    column="valid_flag"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updatorId"    column="updator_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectRoomVo">
+        select id, room_name, creator_id, create_name, invite_id, invite_name, watch_id, watch_name, valid_flag, del_flag, create_time, update_by, updator_id, update_time, remark from room
+    </sql>
+
+    <select id="selectRoomList" parameterType="Room" resultMap="RoomResult">
+        <include refid="selectRoomVo"/>
+        <where>
+            <if test="roomName != null  and roomName != ''"> and room_name like concat('%', #{roomName}, '%')</if>
+            <if test="creatorId != null "> and creator_id = #{creatorId}</if>
+            <if test="createName != null  and createName != ''"> and create_name like concat('%', #{createName}, '%')</if>
+            <if test="inviteId != null "> and invite_id = #{inviteId}</if>
+            <if test="inviteName != null  and inviteName != ''"> and invite_name like concat('%', #{inviteName}, '%')</if>
+            <if test="watchId != null "> and watch_id = #{watchId}</if>
+            <if test="watchName != null  and watchName != ''"> and watch_name like concat('%', #{watchName}, '%')</if>
+            <if test="validFlag != null "> and valid_flag = #{validFlag}</if>
+            <if test="updatorId != null "> and updator_id = #{updatorId}</if>
+        </where>
+    </select>
+
+    <select id="selectRoomById" parameterType="Long" resultMap="RoomResult">
+        <include refid="selectRoomVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertRoom" parameterType="Room" useGeneratedKeys="true" keyProperty="id">
+        insert into room
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roomName != null">room_name,</if>
+            <if test="creatorId != null">creator_id,</if>
+            <if test="createName != null">create_name,</if>
+            <if test="inviteId != null">invite_id,</if>
+            <if test="inviteName != null">invite_name,</if>
+            <if test="watchId != null">watch_id,</if>
+            <if test="watchName != null">watch_name,</if>
+            <if test="validFlag != null">valid_flag,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updatorId != null">updator_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roomName != null">#{roomName},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createName != null">#{createName},</if>
+            <if test="inviteId != null">#{inviteId},</if>
+            <if test="inviteName != null">#{inviteName},</if>
+            <if test="watchId != null">#{watchId},</if>
+            <if test="watchName != null">#{watchName},</if>
+            <if test="validFlag != null">#{validFlag},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updatorId != null">#{updatorId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateRoom" parameterType="Room">
+        update room
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roomName != null">room_name = #{roomName},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="createName != null">create_name = #{createName},</if>
+            <if test="inviteId != null">invite_id = #{inviteId},</if>
+            <if test="inviteName != null">invite_name = #{inviteName},</if>
+            <if test="watchId != null">watch_id = #{watchId},</if>
+            <if test="watchName != null">watch_name = #{watchName},</if>
+            <if test="validFlag != null">valid_flag = #{validFlag},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updatorId != null">updator_id = #{updatorId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRoomById" parameterType="Long">
+        delete from room where id = #{id}
+    </delete>
+
+    <delete id="deleteRoomByIds" parameterType="String">
+        delete from room where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

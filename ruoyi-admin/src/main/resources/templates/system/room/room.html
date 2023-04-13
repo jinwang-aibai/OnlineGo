@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('房间列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+<!--                            <li>-->
+<!--                                <label>创建人id 创建者的sys_user_id：</label>-->
+<!--                                <input type="text" name="creatorId"/>-->
+<!--                            </li>-->
+                            <li>
+                                <label>创建人：</label>
+                                <input type="text" name="createName"/>
+                            </li>
+<!--                            <li>-->
+<!--                                <label>邀请人id：</label>-->
+<!--                                <input type="text" name="inviteId"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>邀请人：</label>-->
+<!--                                <input type="text" name="inviteName"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>围观人id：</label>-->
+<!--                                <input type="text" name="watchId"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>围观人：</label>-->
+<!--                                <input type="text" name="watchName"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>是否有效 0：无效，1：有效：</label>-->
+<!--                                <input type="text" name="validFlag"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>删除标志 1：已删除，0：未删除：</label>-->
+<!--                                <input type="text" name="delFlag"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>更新人id 更新者的sys_user_id：</label>-->
+<!--                                <input type="text" name="updatorId"/>-->
+<!--                            </li>-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:room:add">
+                    <i class="fa fa-plus"></i> 添加房间
+                </a>
+<!--                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:room:edit">-->
+<!--                    <i class="fa fa-edit"></i> 修改-->
+<!--                </a>-->
+<!--                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:room:remove">-->
+<!--                    <i class="fa fa-remove"></i> 删除-->
+<!--                </a>-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:room:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:room:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:room:remove')}]];
+        var prefix = ctx + "system/room";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "房间",
+                columns: [
+                //     {
+                //     checkbox: true
+                // },
+                    {
+                        field: 'roomName',
+                        title: '房间名'
+                    },
+                {
+                    field: 'id',
+                    title: '房间ID',
+                    visible: false
+                },
+                // {
+                //     field: 'creatorId',
+                //     title: '创建人id 创建者的sys_user_id'
+                // },
+                {
+                    field: 'createName',
+                    title: '创建人'
+                },
+                // {
+                //     field: 'inviteId',
+                //     title: '邀请人id'
+                // },
+                // {
+                //     field: 'inviteName',
+                //     title: '邀请人'
+                // },
+                // {
+                //     field: 'watchId',
+                //     title: '围观人id'
+                // },
+                // {
+                //     field: 'watchName',
+                //     title: '围观人'
+                // },
+                // {
+                //     field: 'validFlag',
+                //     title: '是否有效 0：无效，1：有效'
+                // },
+                // {
+                //     field: 'updatorId',
+                //     title: '更新人id 更新者的sys_user_id'
+                // },
+                // {
+                //     field: 'remark',
+                //     title: '备注'
+                // },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="intoRoom(\'' + row.roomName + '\', \'' + row.id + '\')"><i class="fa fa-edit"></i>进入房间</a> ');
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function intoRoom(roomName, id){
+
+            $.modal.openTab(roomName + "的房间", "/system/room/weiqi?id=" + id)
+
+        }
+    </script>
+
+</body>
+</html>

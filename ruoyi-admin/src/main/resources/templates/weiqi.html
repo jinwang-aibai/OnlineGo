@@ -25,28 +25,16 @@
   <canvas id="C" width="800" height="600"></canvas>
   <textarea id="T" rows="20"></textarea>
   <button id="RePlay">复现棋谱</button>
-  <script src="./js/main.js"></script>
+  <button id="palyGame" onclick="palyGame()">开始游戏</button>
+  <script th:src="@{/js/jquery.min.js?v=3.6.3}"></script>
+  <script th:inline="javascript">
+    var id = [[${id}]]
+  </script>
+    <script src="/js/main.js"></script>
 
 </body>
 
 <script>
-  var socket = new WebSocket("ws://localhost:8085/myWebSocketHandler");
-  socket.onopen = function(event) {
-    console.log("1")
-    console.log(event)
-    socket.send(undefined);
-  // 连接建立后处理逻辑
-  };
-  socket.onmessage = function(event) {
-    console.log("2")
-    console.log(event)
 
-    // 处理收到的消息
-  };
-  socket.onclose = function(event) {
-    console.log("3")
-    console.log(event)
-    // 连接关闭后处理逻辑
-  };
 </script>
 </html>

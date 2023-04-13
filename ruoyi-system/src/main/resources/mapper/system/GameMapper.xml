@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.GameMapper">
+    
+    <resultMap type="Game" id="GameResult">
+        <result property="id"    column="id"    />
+        <result property="myselfName"    column="myself_name"    />
+        <result property="myselfId"    column="myself_id"    />
+        <result property="enemyName"    column="enemy_name"    />
+        <result property="enemyId"    column="enemy_id"    />
+        <result property="roomId"    column="room_id"    />
+        <result property="validFlag"    column="valid_flag"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="creatorId"    column="creator_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updatorId"    column="updator_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectGameVo">
+        select id, myself_name, myself_id, enemy_name, enemy_id, room_id, valid_flag, del_flag, create_by, creator_id, create_time, update_by, updator_id, update_time, remark from game
+    </sql>
+
+    <select id="selectGameList" parameterType="Game" resultMap="GameResult">
+        <include refid="selectGameVo"/>
+        <where>  
+            <if test="myselfName != null  and myselfName != ''"> and myself_name like concat('%', #{myselfName}, '%')</if>
+            <if test="myselfId != null "> and myself_id = #{myselfId}</if>
+            <if test="enemyName != null  and enemyName != ''"> and enemy_name like concat('%', #{enemyName}, '%')</if>
+            <if test="enemyId != null "> and enemy_id = #{enemyId}</if>
+            <if test="roomId != null "> and room_id = #{roomId}</if>
+            <if test="validFlag != null "> and valid_flag = #{validFlag}</if>
+            <if test="creatorId != null "> and creator_id = #{creatorId}</if>
+            <if test="updatorId != null "> and updator_id = #{updatorId}</if>
+        </where>
+    </select>
+    
+    <select id="selectGameById" parameterType="Long" resultMap="GameResult">
+        <include refid="selectGameVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGame" parameterType="Game" useGeneratedKeys="true" keyProperty="id">
+        insert into game
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="myselfName != null">myself_name,</if>
+            <if test="myselfId != null">myself_id,</if>
+            <if test="enemyName != null">enemy_name,</if>
+            <if test="enemyId != null">enemy_id,</if>
+            <if test="roomId != null">room_id,</if>
+            <if test="validFlag != null">valid_flag,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="creatorId != null">creator_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updatorId != null">updator_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="myselfName != null">#{myselfName},</if>
+            <if test="myselfId != null">#{myselfId},</if>
+            <if test="enemyName != null">#{enemyName},</if>
+            <if test="enemyId != null">#{enemyId},</if>
+            <if test="roomId != null">#{roomId},</if>
+            <if test="validFlag != null">#{validFlag},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updatorId != null">#{updatorId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGame" parameterType="Game">
+        update game
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="myselfName != null">myself_name = #{myselfName},</if>
+            <if test="myselfId != null">myself_id = #{myselfId},</if>
+            <if test="enemyName != null">enemy_name = #{enemyName},</if>
+            <if test="enemyId != null">enemy_id = #{enemyId},</if>
+            <if test="roomId != null">room_id = #{roomId},</if>
+            <if test="validFlag != null">valid_flag = #{validFlag},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updatorId != null">updator_id = #{updatorId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGameById" parameterType="Long">
+        delete from game where id = #{id}
+    </delete>
+
+    <delete id="deleteGameByIds" parameterType="String">
+        delete from game where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

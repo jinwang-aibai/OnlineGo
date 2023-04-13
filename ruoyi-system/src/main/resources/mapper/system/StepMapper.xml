@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.StepMapper">
+    
+    <resultMap type="Step" id="StepResult">
+        <result property="id"    column="id"    />
+        <result property="gameId"    column="game_id"    />
+        <result property="playerId"    column="player_id"    />
+        <result property="hang"    column="hang"    />
+        <result property="lie"    column="lie"    />
+        <result property="type"    column="type"    />
+        <result property="validFlag"    column="valid_flag"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="creatorId"    column="creator_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updatorId"    column="updator_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectStepVo">
+        select id, game_id, player_id, hang, lie, type, valid_flag, del_flag, create_by, creator_id, create_time, update_by, updator_id, update_time, remark from step
+    </sql>
+
+    <select id="selectStepList" parameterType="Step" resultMap="StepResult">
+        <include refid="selectStepVo"/>
+        <where>  
+            <if test="gameId != null "> and game_id = #{gameId}</if>
+            <if test="playerId != null "> and player_id = #{playerId}</if>
+            <if test="hang != null "> and hang = #{hang}</if>
+            <if test="lie != null "> and lie = #{lie}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="validFlag != null "> and valid_flag = #{validFlag}</if>
+            <if test="delFlag != null "> and del_flag = #{delFlag}</if>
+            <if test="creatorId != null "> and creator_id = #{creatorId}</if>
+            <if test="updatorId != null "> and updator_id = #{updatorId}</if>
+        </where>
+    </select>
+    
+    <select id="selectStepById" parameterType="Long" resultMap="StepResult">
+        <include refid="selectStepVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStep" parameterType="Step" useGeneratedKeys="true" keyProperty="id">
+        insert into step
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gameId != null">game_id,</if>
+            <if test="playerId != null">player_id,</if>
+            <if test="hang != null">hang,</if>
+            <if test="lie != null">lie,</if>
+            <if test="type != null">type,</if>
+            <if test="validFlag != null">valid_flag,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="creatorId != null">creator_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updatorId != null">updator_id,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gameId != null">#{gameId},</if>
+            <if test="playerId != null">#{playerId},</if>
+            <if test="hang != null">#{hang},</if>
+            <if test="lie != null">#{lie},</if>
+            <if test="type != null">#{type},</if>
+            <if test="validFlag != null">#{validFlag},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updatorId != null">#{updatorId},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStep" parameterType="Step">
+        update step
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gameId != null">game_id = #{gameId},</if>
+            <if test="playerId != null">player_id = #{playerId},</if>
+            <if test="hang != null">hang = #{hang},</if>
+            <if test="lie != null">lie = #{lie},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="validFlag != null">valid_flag = #{validFlag},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updatorId != null">updator_id = #{updatorId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStepById" parameterType="Long">
+        delete from step where id = #{id}
+    </delete>
+
+    <delete id="deleteStepByIds" parameterType="String">
+        delete from step where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

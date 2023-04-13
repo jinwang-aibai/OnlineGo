@@ -113,6 +113,7 @@ public class FriendController extends BaseController
         if (friendInfo == null){
             return error("该用户名不存在");
         }
+
         friend.setAddName(myInfo.getUserName());
         friend.setAdduserId(super.getUserId());
         friend.setFrienduserId(friendInfo.getUserId());
