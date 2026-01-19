@@ -12,7 +12,7 @@
 
 4. 确认提交的功能或修复的问题符合项目规划或 Issue 描述，未超出范围。若涉及重大功能变更，需提前在项目 Issue 或讨论区与核心维护者达成共识。
 
-5. 关于授权，请阅读我们的简短<a href="https://gitee.com/qiantongtech/qKnow/blob/master/LICENSE" target="_blank">许可与贡献者协议</a> 并同意项目的 贡献者协议 。
+5. 关于授权，请阅读我们的<a href="https://gitee.com/qiantongtech/qKnow/blob/master/LICENSE" target="_blank">许可与贡献者协议</a> 。
 
 # 二、分支规范
 
