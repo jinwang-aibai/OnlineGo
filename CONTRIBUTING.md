@@ -1,4 +1,4 @@
-# Gitee 开源项目 Pull Request (PR) 规范
+# qKnow 开源项目 Pull Request (PR) 规范
 
 本文档旨在规范项目的 Pull Request (PR) 提交与评审流程，提升协作效率，保证代码质量，降低维护成本。所有参与项目开发的贡献者均需遵守本规范。
 
