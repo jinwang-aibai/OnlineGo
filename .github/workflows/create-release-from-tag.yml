@@ -1,5 +1,4 @@
-# .github/workflows/auto-release.yml
-name: Create Release on Tag Push
+name: Create Release From Tag
 
 on:
   push:
@@ -12,30 +11,40 @@ permissions:
 jobs:
   create-release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
-      - name: Get tag annotation
-        id: tag_info
+      - name: Read tag message
+        shell: bash
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
-          # 获取 tag annotation 作为 release notes
-          ANNOTATION=$(git tag -l --format='%(contents)' "$TAG_NAME" 2>/dev/null || echo "")
-          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
-          # 用 delimiter 处理多行内容
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$ANNOTATION" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          TAG="${GITHUB_REF_NAME}"
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tag_info.outputs.tag_name }}
-          name: ${{ steps.tag_info.outputs.tag_name }}
-          body: ${{ steps.tag_info.outputs.notes }}
-          generate_release_notes: true
+          if git cat-file -e "$TAG^{tag}" 2>/dev/null; then
+            git for-each-ref "refs/tags/$TAG" --format='%(contents)' > RELEASE_NOTES.md
+          else
+            echo "Release $TAG" > RELEASE_NOTES.md
+          fi
+
+          echo "Release notes:"
+          cat RELEASE_NOTES.md
+
+      - name: Create or update GitHub Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" \
+              --title "$TAG" \
+              --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes-file RELEASE_NOTES.md \
+              --latest
+          fi
