@@ -1,0 +1,30 @@
+name: Release                    # workflow 名字，显示在 GitHub Actions 页面
+
+on:                              # 触发条件
+  push:
+    tags:
+      - "v*"                     # 推送 v 开头的 tag 时触发（如 v1.0.0、v2.3.1）
+
+permissions:
+  contents: write                # 允许创建 Release（需要写权限）
+
+jobs:
+  release:
+    runs-on: ubuntu-latest       # 用 GitHub 免费的公共 runner
+
+    steps:
+      - uses: actions/checkout@v4   # 拉取代码
+        with:
+          fetch-depth: 0            # 拉全量 git 历史（读 tag annotation 必须）
+
+      - name: Create Release
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}          # 从 refs/tags/v1.0.0 提取出 v1.0.0
+          BODY=$(git tag -l --format='%(contents)' "$TAG")   # 读取 tag 的 annotation 内容
+          if [ -z "$BODY" ]; then               # 如果 tag 没有 annotation（轻量级 tag）
+            gh release create "$TAG" --generate-notes         # 自动生成 changelog
+          else                                  # 如果有 annotation
+            echo "$BODY" | gh release create "$TAG" --title "$TAG" --notes-file -   # 用 annotation 内容作为 Release body
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
