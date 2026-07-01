@@ -1,6 +1,7 @@
-name: Create Release From Tag
+# .github/workflows/auto-release.yml
+name: Create Release on Tag Push
 
-'on':
+on:
   push:
     tags:
       - 'v*'
@@ -9,52 +10,32 @@ permissions:
   contents: write
 
 jobs:
-  release:
-    name: Create GitHub Release
+  create-release:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code with tags
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Create or update release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          TAG_NAME: ${{ github.ref_name }}
+      - name: Get tag annotation
+        id: tag_info
         run: |
-          set -e
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          # 获取 tag annotation 作为 release notes
+          ANNOTATION=$(git tag -l --format='%(contents)' "$TAG_NAME" 2>/dev/null || echo "")
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          # 用 delimiter 处理多行内容
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$ANNOTATION" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-          git fetch --tags --force
-
-          TAG_MESSAGE="$(git for-each-ref "refs/tags/${TAG_NAME}" --format='%(contents)')"
-
-          if [ -z "$TAG_MESSAGE" ]; then
-            {
-              echo "## ${TAG_NAME} 发布说明"
-              echo
-              echo "本次发布暂无详细说明。"
-            } > release-notes.md
-          else
-            printf "%s\n" "$TAG_MESSAGE" > release-notes.md
-          fi
-
-          FIRST_LINE="$(head -n 1 release-notes.md | sed -E 's/^#+[[:space:]]*//')"
-
-          if [ -z "$FIRST_LINE" ]; then
-            RELEASE_TITLE="qData ${TAG_NAME} 发布说明"
-          else
-            RELEASE_TITLE="$FIRST_LINE"
-          fi
-
-          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
-            gh release edit "$TAG_NAME" \
-              --title "$RELEASE_TITLE" \
-              --notes-file release-notes.md
-          else
-            gh release create "$TAG_NAME" \
-              --verify-tag \
-              --title "$RELEASE_TITLE" \
-              --notes-file release-notes.md
-          fi
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag_info.outputs.tag_name }}
+          name: ${{ steps.tag_info.outputs.tag_name }}
+          body: ${{ steps.tag_info.outputs.notes }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
