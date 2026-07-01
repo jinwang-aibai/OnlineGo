@@ -1,30 +1,78 @@
-name: Release                    # workflow 名字，显示在 GitHub Actions 页面
+name: Release
 
-on:                              # 触发条件
+on:
   push:
     tags:
-      - "v*"                     # 推送 v 开头的 tag 时触发（如 v1.0.0、v2.3.1）
+      - "v*"
 
 permissions:
-  contents: write                # 允许创建 Release（需要写权限）
+  contents: write
 
 jobs:
   release:
-    runs-on: ubuntu-latest       # 用 GitHub 免费的公共 runner
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4   # 拉取代码
+      - name: Check out code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0            # 拉全量 git 历史（读 tag annotation 必须）
+          fetch-depth: 0
+          fetch-tags: true
 
-      - name: Create Release
-        run: |
-          TAG=${GITHUB_REF#refs/tags/}          # 从 refs/tags/v1.0.0 提取出 v1.0.0
-          BODY=$(git tag -l --format='%(contents)' "$TAG")   # 读取 tag 的 annotation 内容
-          if [ -z "$BODY" ]; then               # 如果 tag 没有 annotation（轻量级 tag）
-            gh release create "$TAG" --generate-notes         # 自动生成 changelog
-          else                                  # 如果有 annotation
-            echo "$BODY" | gh release create "$TAG" --title "$TAG" --notes-file -   # 用 annotation 内容作为 Release body
-          fi
+      - name: Create GitHub Release and clean tag message
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          TAG="${GITHUB_REF#refs/tags/}"
+
+          echo "Current tag: ${TAG}"
+          echo "GitHub ref: ${GITHUB_REF}"
+          echo "GitHub sha: ${GITHUB_SHA}"
+
+          git fetch --force --tags origin
+
+          echo "---- tag info ----"
+          git for-each-ref "refs/tags/${TAG}" \
+            --format='tag=%(refname:short) object=%(objectname) type=%(objecttype)'
+
+          # 读取 Gitee 同步过来的 tag annotation 内容
+          BODY="$(git tag -l --format='%(contents)' "${TAG}" || true)"
+
+          if [ -z "${BODY}" ]; then
+            echo "Release ${TAG}" > release_body.md
+          else
+            printf '%s\n' "${BODY}" > release_body.md
+          fi
+
+          echo "---- release body ----"
+          cat release_body.md
+
+          # 创建或更新 GitHub Release，让 Markdown 在 Release 页面正常渲染
+          if gh release view "${TAG}" >/dev/null 2>&1; then
+            gh release edit "${TAG}" \
+              --title "${TAG}" \
+              --notes-file release_body.md
+          else
+            gh release create "${TAG}" \
+              --title "${TAG}" \
+              --notes-file release_body.md
+          fi
+
+          # 取 tag 最终指向的 commit
+          COMMIT="$(git rev-list -n 1 "${TAG}")"
+
+          echo "Tag ${TAG} points to commit ${COMMIT}"
+
+          # 配置 git 用户
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # 重建 GitHub 侧 tag annotation，只保留短文本，避免 Tags 页面显示 Markdown 原文
+          git tag -fa "${TAG}" "${COMMIT}" -m "${TAG}"
+
+          # 强制更新 GitHub 上的 tag
+          git push --force origin "refs/tags/${TAG}"
+
+          echo "Cleaned GitHub tag message for ${TAG}"
