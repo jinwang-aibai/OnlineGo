@@ -1,0 +1,60 @@
+name: Create Release From Tag
+
+'on':
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code with tags
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -e
+
+          git fetch --tags --force
+
+          TAG_MESSAGE="$(git for-each-ref "refs/tags/${TAG_NAME}" --format='%(contents)')"
+
+          if [ -z "$TAG_MESSAGE" ]; then
+            {
+              echo "## ${TAG_NAME} 发布说明"
+              echo
+              echo "本次发布暂无详细说明。"
+            } > release-notes.md
+          else
+            printf "%s\n" "$TAG_MESSAGE" > release-notes.md
+          fi
+
+          FIRST_LINE="$(head -n 1 release-notes.md | sed -E 's/^#+[[:space:]]*//')"
+
+          if [ -z "$FIRST_LINE" ]; then
+            RELEASE_TITLE="qData ${TAG_NAME} 发布说明"
+          else
+            RELEASE_TITLE="$FIRST_LINE"
+          fi
+
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release edit "$TAG_NAME" \
+              --title "$RELEASE_TITLE" \
+              --notes-file release-notes.md
+          else
+            gh release create "$TAG_NAME" \
+              --verify-tag \
+              --title "$RELEASE_TITLE" \
+              --notes-file release-notes.md
+          fi
