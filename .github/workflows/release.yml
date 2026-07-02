@@ -19,11 +19,9 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Sync Gitee Release to GitHub Release
+      - name: Create or update GitHub Release from tag annotation
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
-          GITEE_REPO: jinwang0328/online-go-game
         run: |
           set -euo pipefail
 
@@ -39,40 +37,28 @@ jobs:
           git for-each-ref "refs/tags/${TAG}" \
             --format='tag=%(refname:short) object=%(objectname) type=%(objecttype)'
 
-          ENCODED_TAG="$(jq -rn --arg tag "${TAG}" '$tag | @uri')"
-          GITEE_RELEASE_URL="https://gitee.com/api/v5/repos/${GITEE_REPO}/releases/tags/${ENCODED_TAG}"
+          TAG_TYPE="$(git for-each-ref "refs/tags/${TAG}" --format='%(objecttype)')"
+          RELEASE_BODY="$(git tag -l --format='%(contents)' "${TAG}" || true)"
 
-          echo "Fetching Gitee release ${GITEE_REPO}@${TAG}"
-          if [ -n "${GITEE_TOKEN:-}" ]; then
-            curl -fsSL -G "${GITEE_RELEASE_URL}" \
-              --data-urlencode "access_token=${GITEE_TOKEN}" \
-              -o gitee_release.json
-          else
-            curl -fsSL "${GITEE_RELEASE_URL}" -o gitee_release.json
+          if [ "${TAG_TYPE}" != "tag" ]; then
+            echo "::warning::${TAG} is not an annotated tag; release notes will fall back to the tag name."
+            RELEASE_BODY=""
           fi
 
-          if ! jq -e '.tag_name // empty' gitee_release.json >/dev/null; then
-            echo "::error::Gitee release for tag ${TAG} was not found or returned an unexpected response."
-            cat gitee_release.json
-            exit 1
-          fi
-
-          RELEASE_TITLE="$(jq -r --arg tag "${TAG}" '.name // .tag_name // $tag' gitee_release.json)"
-          if [ -z "${RELEASE_TITLE}" ] || [ "${RELEASE_TITLE}" = "null" ]; then
-            RELEASE_TITLE="${TAG}"
-          fi
-
-          jq -r '.body // ""' gitee_release.json > release_body.md
-          if [ ! -s release_body.md ]; then
+          if [ -z "${RELEASE_BODY}" ]; then
             echo "Release ${TAG}" > release_body.md
+          else
+            printf '%s\n' "${RELEASE_BODY}" > release_body.md
           fi
+
+          RELEASE_TITLE="${TAG}"
 
           echo "---- release title ----"
           printf '%s\n' "${RELEASE_TITLE}"
           echo "---- release body ----"
           cat release_body.md
 
-          # 创建或更新 GitHub Release，让 GitHub Release 内容与 Gitee Release 保持一致
+          # 创建或更新 GitHub Release，正文来自同步过来的 annotated tag 内容
           if gh release view "${TAG}" >/dev/null 2>&1; then
             gh release edit "${TAG}" \
               --title "${RELEASE_TITLE}" \
